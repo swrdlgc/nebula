@@ -83,7 +83,7 @@
       <requirement
           name="org.eclipse.sdk.feature.group"/>
       <sourceLocator
-          rootFolder="${git.clone.location}"
+          rootFolder="${git.clone.location}/widgets"
           locateNestedProjects="true"/>
       <repositoryList
           name="Mars">
@@ -123,6 +123,16 @@
         <operand
             xsi:type="predicates:RepositoryPredicate"
             project="org.eclipse.nebula.feature"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Grid"
+        id="">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:LocationPredicate"
+            pattern=".*grid.*"/>
       </predicate>
     </workingSet>
     <description>The dynamic working sets for ${scope.project.label}</description>
