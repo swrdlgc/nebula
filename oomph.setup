@@ -117,16 +117,7 @@
   <setupTask
       xsi:type="setup.workingsets:WorkingSetTask">
     <workingSet
-        name="${scope.project.name}">
-      <predicate
-          xsi:type="predicates:AndPredicate">
-        <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.nebula.feature"/>
-      </predicate>
-    </workingSet>
-    <workingSet
-        name="Grid"
+        name="${scope.project.name}.Grid"
         id="">
       <predicate
           xsi:type="predicates:AndPredicate">
