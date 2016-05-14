@@ -26,6 +26,16 @@ import org.eclipse.swt.widgets.Event;
 
 class AnalogClockPainter implements IControlPainter {
 
+	/**
+	 * Constant for the 12 hour analog clock format
+	 */
+	private static final String HOUR_12 = "h"; //$NON-NLS-1$
+
+	/**
+	 * Constant for the 24 hour analog clock format
+	 */
+	private static final String HOUR_24 = "H"; //$NON-NLS-1$
+	
 	private CDateTime cdt;
 	private AnalogTimePicker picker;
 	private boolean paintMinorTicks = true;
@@ -37,18 +47,22 @@ class AnalogClockPainter implements IControlPainter {
 		this.picker = picker;
 	}
 	
+	@Override
 	public void dispose() {
 		// nothing to do
 	}
 	
+	@Override
 	public void paintBackground(VControl control, Event e) {
 		// nothing to do
 	}
 
+	@Override
 	public void paintBorders(VControl control, Event e) {
 		// nothing to do
 	}
 
+	@Override
 	public final void paintContent(VControl control, Event e) {
 		e.gc.setAdvanced(true);
 		e.gc.setAntialias(SWT.ON);
@@ -198,13 +212,13 @@ class AnalogClockPainter implements IControlPainter {
 		
 		t = new Transform(e.display);
 		t.translate(picker.dialCenter.x, picker.dialCenter.y);
-		t.rotate((float) -90);
+		t.rotate(-90);
 		
 		inc = 12;
 		for(int i = 0; i < inc; i++) {
 			e.gc.setTransform(t);
 			e.gc.drawLine(picker.dialRadius-15, 0, picker.dialRadius-8, 0);
-			t.rotate((float) 30);
+			t.rotate(30);
 		}
 
 		if(paintMinorTicks || picker.is24Hour) {
@@ -215,7 +229,7 @@ class AnalogClockPainter implements IControlPainter {
 					e.gc.setTransform(t);
 					e.gc.drawLine(picker.dialRadius-13, 0, picker.dialRadius-10, 0);
 				}
-				t.rotate((float) (picker.is24Hour ? 15 : 6));
+				t.rotate(picker.is24Hour ? 15 : 6);
 			}
 		}
 		
@@ -223,7 +237,8 @@ class AnalogClockPainter implements IControlPainter {
 
 		Calendar tmpcal = cdt.getCalendarInstance();
 		tmpcal.set(1, 1, 1, 0, 0, 0);
-		SimpleDateFormat sdf = new SimpleDateFormat(picker.is24Hour ? "H" : "h");
+		SimpleDateFormat sdf = new SimpleDateFormat(picker.is24Hour ? HOUR_24 : HOUR_12);
+		sdf.setTimeZone(tmpcal.getTimeZone());
 		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_DARK_BLUE));
 		panel.setAlpha(e.gc, 200);
 
