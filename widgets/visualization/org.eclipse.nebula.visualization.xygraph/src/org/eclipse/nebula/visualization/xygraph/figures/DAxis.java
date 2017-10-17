@@ -330,15 +330,22 @@ public class DAxis extends Axis {
 		}
 		setTicksAtEnds(false);
 
-		if (Double.isNaN(lower) || Double.isNaN(upper) || Double.isInfinite(lower) || Double.isInfinite(upper)
-				|| Double.isInfinite(upper - lower)) {
+		if (Double.isNaN(lower) || Double.isNaN(upper) || Double.isInfinite(lower) || Double.isInfinite(upper)) {
 			throw new IllegalArgumentException("Illegal range: lower=" + lower + ", upper=" + upper);
 		}
 		forceRange = lower == upper;
 		if (forceRange) {
-			final double delta = (lower == 0 ? 1 : Math.abs(lower)) * ZERO_RANGE_FRACTION;
-			upper += delta;
-			lower -= delta;
+			double delta = (lower == 0 ? 1 : Math.abs(lower)) * ZERO_RANGE_FRACTION;
+			double h = upper + delta; // split ends of range apart equally
+			double l = lower - delta;
+			if (Double.isInfinite(h)) { // limit splitting to one side
+				lower = l - delta;
+			} else if (Double.isInfinite(l)) {
+				upper = h + delta;
+			} else {
+				upper = h;
+				lower = l;
+			}
 		}
 		if (isLogScaleEnabled()) {
 			if (upper <= 0)
