@@ -50,8 +50,8 @@ public class DAxis extends Axis {
 	/** the default minimum value of log scale range */
 	private final static double DEFAULT_LOG_SCALE_MIN = 0.0001d;
 
-	// used if difference between min and max is too small
-	private static final double ZERO_RANGE_FRACTION = 0.125;
+	// used if difference between min and max is zero
+	private static final double ZERO_RANGE_LOWEST_FRACTION = Math.pow(2, -53);
 
 	/**
 	 * Constructor that creates a DAxis with no title
@@ -335,12 +335,20 @@ public class DAxis extends Axis {
 		}
 		forceRange = lower == upper;
 		if (forceRange) {
-			double delta = (lower == 0 ? 1 : Math.abs(lower)) * ZERO_RANGE_FRACTION;
-			double h = upper + delta; // split ends of range apart equally
-			double l = lower - delta;
+			double delta = (lower == 0 ? 1 : Math.abs(lower));
+			double limit = delta * ZERO_RANGE_LOWEST_FRACTION;
+			double h;
+			double l;
+			do { // split ends of range apart equally
+				delta /= 2;
+				h = upper + delta;
+				l = lower - delta;
+			} while ((Double.isInfinite(h) || Double.isInfinite(l)) && delta > limit);
+
 			if (Double.isInfinite(h)) { // limit splitting to one side
 				lower = l - delta;
-			} else if (Double.isInfinite(l)) {
+			}
+			if (Double.isInfinite(l)) {
 				upper = h + delta;
 			} else {
 				upper = h;
