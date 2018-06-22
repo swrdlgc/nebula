@@ -27,6 +27,7 @@ import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -109,9 +110,16 @@ class EmptyTablePlaceholder extends Canvas {
 		if (header != null) {
 			headerSize = header.getSize();
 		}
-		Point parentSize = getParent().getSize();
 		
-		setBounds(0, headerSize.y+2, parentSize.x-4, parentSize.y - headerSize.y-6);
+		Point rowSize = new Point(0, 0);
+		Control rows[] = parentTable.getRowControls();
+		if(rows.length > 0) {
+			rowSize = rows[0].getSize();
+			rowSize.y *= parentTable.getNumRowsVisible();
+		}
+		
+		Point parentSize = getParent().getSize();
+		setBounds(0, headerSize.y + rowSize.y + 2, parentSize.x, parentSize.y - headerSize.y - rowSize.y - 2);
 	}
 
 	
@@ -146,11 +154,17 @@ class EmptyTablePlaceholder extends Canvas {
 			int oldLineStyle = e.gc.getLineStyle();
 			int oldLineWidth = e.gc.getLineWidth();
 			try {
+				Point size = getSize();
+				Color bgColor = parentTable.getBackground();
+				if(bgColor != null) {
+					e.gc.setBackground(bgColor);
+					e.gc.fillRectangle(new Rectangle(0, 0, size.x, size.y));
+				}
+				
 				if (focusControl) {
 					e.gc.setLineStyle(SWT.LINE_DASH);
 					e.gc.setLineWidth(2);
-					Point parentSize = getSize();
-					e.gc.drawRectangle(1, 2, parentSize.x-2, parentSize.y-3);
+					e.gc.drawRectangle(2, 2, size.x - 4, size.y - 4);
 				}
 
 				e.gc.setForeground(RED);

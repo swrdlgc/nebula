@@ -459,7 +459,7 @@ public class CompositeTable extends Canvas {
 	 */
 	public void setInsertHint(String newHint) {
 		this.insertHint = newHint;
-		if (contentPane != null && numRowsInCollection < 1) {
+		if (contentPane != null) {
 			contentPane.emptyTablePlaceholder.setMessage(newHint);
 		}
 	}

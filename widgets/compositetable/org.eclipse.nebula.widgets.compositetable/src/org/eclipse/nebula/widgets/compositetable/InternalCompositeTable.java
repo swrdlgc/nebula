@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import org.eclipse.nebula.widgets.compositetable.internal.DuckType;
+import org.eclipse.nebula.widgets.compositetable.internal.ISelectableRegionControl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -33,8 +35,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.nebula.widgets.compositetable.internal.DuckType;
-import org.eclipse.nebula.widgets.compositetable.internal.ISelectableRegionControl;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -521,14 +521,14 @@ class InternalCompositeTable extends Composite implements Listener {
 		if (numRowsInCollection > 0) {
 			numRowsVisible = numRowsInDisplay;
 
-			disposeEmptyTablePlaceholder();
-
 			int displayableRows = numRowsInCollection - topRow;
 			if (numRowsVisible > displayableRows) {
 				numRowsVisible = displayableRows;
 			}
+			boolean fillEmptyTable = false;
 			if (numRowsVisible > maxRowsVisible) {
 				numRowsVisible = maxRowsVisible;
+				fillEmptyTable = true;
 			}
 			if (numRowsVisible < 1) {
 				numRowsVisible = 1;
@@ -556,6 +556,15 @@ class InternalCompositeTable extends Composite implements Listener {
 				currentVisibleTopRow = topRow;
 				fixNumberOfRows();
 				refreshAllRows();
+			}
+			if(fillEmptyTable) {
+				if(emptyTablePlaceholder == null) {
+					createEmptyTablePlaceholer();
+				} else {
+					emptyTablePlaceholder.redraw();
+				}
+			} else {
+				disposeEmptyTablePlaceholder();
 			}
 		} else {
 			numRowsVisible = 0;
